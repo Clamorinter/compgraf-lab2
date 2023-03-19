@@ -1,23 +1,22 @@
 #pragma once
 #define BASE_COLOR 0
+#define ERROR_OF_POINTER 10
 #include "dynarr.h"
+
+#include "graphics.h"
+#pragma comment(lib,"graphics.lib")
 
 class Figure
 {
 public:
 	Figure() : color(BASE_COLOR) {};
 	virtual void draw();
-
 	virtual void rotate(float angle);
-
 	virtual void zoom(float multiplier);
-
 	virtual void move(int dx, int dy);
-
 	virtual void setColor(int color);
-
-	virtual int isOnFigure(int x, int y);
-
+	virtual bool isOnFigure(int x, int y);
+	virtual int isOnBoarder(int x, int y);
 	virtual char figureName();
 
 protected:
@@ -29,10 +28,15 @@ class Dot : public Figure {
 public:
 	Dot() : Figure(), x(0), y(0) {};
 	Dot(int x, int y) : Figure(), x(x), y(y) {};
+	void draw();
+	void rotate(float angle);
+	void zoom(float multiplier);
+	void move(int dx, int dy);
+	void setColor(int color);
+	bool isOnFigure(int x, int y);
+	int isOnBoarder(int x, int y);
+	char figureName();
 
-	void set(int x, int y);
-	int getX();
-	int getY();
 private:
 	int x;
 	int y;
