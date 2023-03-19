@@ -1,5 +1,6 @@
 #pragma once
 #define BASE_COLOR 0
+#include "dynarr.h"
 
 class Figure
 {
@@ -15,7 +16,7 @@ public:
 
 	virtual void setColor(int color);
 
-	virtual bool isOnFigure(int x, int y);
+	virtual int isOnFigure(int x, int y);
 
 	virtual char figureName();
 
@@ -25,24 +26,60 @@ protected:
 };
 
 class Dot : public Figure {
-protected:
+public:
+	Dot() : Figure(), x(0), y(0) {};
+	Dot(int x, int y) : Figure(), x(x), y(y) {};
+
+	void set(int x, int y);
+	int getX();
+	int getY();
+private:
 	int x;
 	int y;
 };
 
-class Line : public Dot {
+class Line : public Figure {
 public:
+	Line() : Figure() {
+		for (int i = 0; i < 2; i++)
+		{
+			Dots.append(new Dot);
+		}
+	};
+	~Line() {
+		for (int i = 1; i >= 0; i--)
+		{
+			delete Dots.arr[i];
+		}
+	}
 	void dragDot(int dx, int dy, int numberOfDot);
-	bool isOnDot(int x, int y, int numberOfDot);
+	int isOnDot(int x, int y);
 
-protected:
-	Figure** Dots;
+private:
+	dynarr<Figure*> Dots;
 };
 
-class Polygon : public Line {
+class Polygon : public Figure {
 public:
+	Polygon(int numOfAngles) : Figure(), numOfAngles(numOfAngles) {
+		for (int i = 0; i < numOfAngles; i++)
+		{
+			Angles.append(new Dot);
+			Lines.append(new Line);
+		}
+	}
+	~Polygon()
+	{
+		for (int i = numOfAngles-1; i >= 0; i--)
+		{
+			delete Angles.arr[i];
+			delete Lines.arr[i];
+		}
+	}
 	void dragLine(int dx, int dy, int numberOfLine);
-	bool isOnLine(int dx, int dy, int numberOfLine);
-protected:
-	Figure** Lines;
+	int isOnLine(int dx, int dy);
+private:
+	dynarr<Figure*> Lines;
+	dynarr<Figure*> Angles;
+	int numOfAngles;
 };
