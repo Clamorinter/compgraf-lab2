@@ -5,8 +5,8 @@ void Dot::draw()
 {
 	putpixel(x, y, color);
 }
-void Dot::rotate(float angle) {}
-void Dot::zoom(float multiplier) {}
+void Dot::rotate(float angle, int centerx, int centery) {}
+void Dot::zoom(float multiplier, int centerx, int centery) {}
 void Dot::move(int dx, int dy) {
 	this->x += dx;
 	this->y += dy;
@@ -35,6 +35,11 @@ char Dot::figureName()
 {
 	return 'D';
 }
+Dot Dot::findCenter()
+{
+	Dot center(x, y);
+	return center;
+}
 int Dot::getX(int numberOfDot = 0)
 {
 	if (numberOfDot == 0)
@@ -61,31 +66,28 @@ void Line::draw()
 	setcolor(color);
 	line(Dots.arr[0]->getX(), Dots.arr[0]->getY(), Dots.arr[1]->getX(), Dots.arr[1]->getY());
 }
-void Line::rotate(float angle)
+void Line::rotate(float angle, int centerx, int centery)
 {
 	int x1 = Dots.arr[0]->getX();
 	int y1 = Dots.arr[0]->getY();
 	int x2 = Dots.arr[1]->getX();
 	int y2 = Dots.arr[1]->getY();
-	Dot center((int)round((float)(x1 + x2) / 2.0), (int)round((float)(y1 + y2) / 2.0));
-	move(-center.getX(), -center.getY());
+	move(-centerx, -centery);
 	int new_x1 = (int)round((float)x1 * cos(angle)) + (int)round((float)y1 * sin(angle));
 	int new_y1 = -(int)round((float)x1 * sin(angle)) + (int)round((float)y1 * cos(angle));
 	int new_x2 = (int)round((float)x2 * cos(angle)) + (int)round((float)y2 * sin(angle));
 	int new_y2 = -(int)round((float)x2* sin(angle)) + (int)round((float)y2 * cos(angle));
 	moveFragment(new_x1 - x1, new_y1 - y1, 0);
 	moveFragment(new_x2 - x2, new_y2 - y2, 1);
-	move(center.getX(), center.getY());
+	move(centerx, centery);
 }
-void Line::zoom(float multiplier)
+void Line::zoom(float multiplier, int centerx, int centery)
 {
 	int x1 = Dots.arr[0]->getX();
 	int y1 = Dots.arr[0]->getY();
 	int x2 = Dots.arr[1]->getX();
 	int y2 = Dots.arr[1]->getY();
-	
-	Dot center((int)round((float)(x1 + x2) / 2.0), (int)round((float)(y1 + y2) / 2.0));
-	move(-center.getX(), -center.getY());
+	move(-centerx, -centery);
 	int new_x1 = (int)round((float)x1 * multiplier);
 	int new_y1 = (int)round((float)y1 * multiplier);
 	int new_x2 = (int)round((float)x2 * multiplier);
@@ -93,7 +95,7 @@ void Line::zoom(float multiplier)
 	if (multiplier < 1.0)
 	{
 		float rad = atan((float)abs(y2-y1) / (float)abs(x2-x1));
-		rotate(0.78539 - rad);
+		rotate(0.78539 - rad, centerx, centery);
 		if (abs(new_x1 - x1) <= 1 || abs(new_y1 - y1) <= 1 || abs(new_x2 - x2) <= 1 || abs(new_y2 - y2) <= 1)
 		{
 			new_x1 = x1;
@@ -102,11 +104,11 @@ void Line::zoom(float multiplier)
 			new_y2 = y2;
 			
 		}
-		rotate(rad - 0.78539);
+		rotate(rad - 0.78539, centerx, centery);
 	}
 	moveFragment(new_x1 - x1, new_y1 - y1, 0);
 	moveFragment(new_x2 - x2, new_y2 - y2, 1);
-	move(center.getX(), center.getY());
+	move(centerx, centery);
 }
 void Line::move(int dx, int dy)
 {
@@ -186,6 +188,18 @@ char Line::figureName()
 {
 	return 'L';
 }
+Dot Line::findCenter()
+{
+	int x = 0;
+	int y = 0;
+	for (int i = 0; i < numOfAngles; i++)
+	{
+		x += Dots.arr[i]->getX();
+		y += Dots.arr[i]->getY();
+	}
+	x = (int)round((float)x / 2.0);
+	y = (int)round((float)y / 2.0);
+}
 int Line::getX(int numberOfDot = 0)
 {
 	return Dots.arr[numberOfDot]->getX();
@@ -200,3 +214,102 @@ int Line::getNumOfAngles()
 }
 
 // Polygon
+void Polygon::draw()
+{
+	setcolor(color);
+	for (int i = 0; i < numOfAngles; i++)
+	{
+		Lines.arr[i]->draw();
+	}
+}
+void Polygon::rotate(float angle, int centerx, int centery)
+{
+	dynarr<Figure*> centerLines;
+	Figure* line;
+	int new_x, new_y, x, y;
+	for (int i = 0; i < numOfAngles; i++)
+	{
+		line = new Line;
+		line->moveFragment(Lines.arr[i]->getX(), Lines.arr[i]->getY(), 0);
+		line->moveFragment(centerx, centery, 1);
+		centerLines.append(line);
+		delete line;
+	}
+	for (int i = 0; i < numOfAngles; i++)
+	{
+		centerLines.arr[i]->rotate(angle, centerx, centery);
+		new_x = centerLines.arr[i]->getX(0);
+		new_y = centerLines.arr[i]->getY(0);
+		x = Lines.arr[i]->getX();
+		y = Lines.arr[i]->getY();
+		moveFragment(new_x - x, new_y - y, i);
+	}
+}
+void Polygon::zoom(float multiplier, int centerx, int centery)
+{
+	dynarr<Figure*> centerLines;
+	Figure* line;
+	int new_x, new_y, x, y;
+	for (int i = 0; i < numOfAngles; i++)
+	{
+		line = new Line;
+		line->moveFragment(Lines.arr[i]->getX(), Lines.arr[i]->getY(), 0);
+		line->moveFragment(centerx, centery, 1);
+		centerLines.append(line);
+		delete line;
+	}
+	for (int i = 0; i < numOfAngles; i++)
+	{
+		centerLines.arr[i]->zoom(multiplier, centerx, centery);
+		new_x = centerLines.arr[i]->getX(0);
+		new_y = centerLines.arr[i]->getY(0);
+		x = Lines.arr[i]->getX();
+		y = Lines.arr[i]->getY();
+		moveFragment(new_x - x, new_y - y, i);
+	}
+}
+void Polygon::move(int dx, int dy)
+{
+	for (int i = 0; i < numOfAngles; i++)
+	{
+		Lines.arr[i]->move(dx, dy);
+	}
+}
+void Polygon::moveFragment(int dx, int dy, int numberOfFragment)
+{
+	if (numberOfFragment < numOfAngles) // Dots
+	{
+		int friendLine = numberOfFragment - 1;
+		Lines.arr[numberOfFragment]->moveFragment(dx, dy, 0);
+		if (numberOfFragment == 0)
+		{
+			friendLine = numOfAngles - 1;
+		}
+		Lines.arr[friendLine]->moveFragment(dx, dy, 1);
+	}
+	else // Lines
+	{
+		numberOfFragment = numberOfFragment - numOfAngles;
+		int prev_line = numberOfFragment - 1;
+		int next_line = numberOfFragment + 1;
+		if (prev_line == -1)
+		{
+			prev_line = numOfAngles - 1;
+		}
+		if (next_line == numOfAngles)
+		{
+			next_line = 0;
+		}
+		Lines.arr[numberOfFragment]->move(dx, dy);
+		Lines.arr[prev_line]->moveFragment(dx, dy, 1);
+		Lines.arr[next_line]->moveFragment(dx, dy, 0);
+	}
+}
+void Polygon::setColor(int color)
+{
+	this->color = color;
+}
+bool Polygon::isOnFigure(int x, int y)
+{
+
+}
