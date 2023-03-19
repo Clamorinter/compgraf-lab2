@@ -11,19 +11,19 @@ class Figure
 {
 public:
 	Figure() : color(BASE_COLOR) {};
-	virtual void draw();
-	virtual void rotate(float angle, int centerx, int centery);
-	virtual void zoom(float multiplier, int centerx, int centery);
-	virtual void move(int dx, int dy);
-	virtual void moveFragment(int dx, int dy, int numberOfFragment);
-	virtual void setColor(int color);
-	virtual bool isOnFigure(int x, int y);
-	virtual int isOnFragment(int x, int y);
-	virtual char figureName();
-	virtual Dot findCenter();
-	virtual int getX(int numberOfDot = 0);
-	virtual int getY(int numberOfDor = 0);
-	virtual int getNumOfAngles();
+	virtual void draw() = 0;
+	virtual void rotate(float angle, int centerx, int centery) = 0;
+	virtual void zoom(float multiplier, int centerx, int centery) = 0;
+	virtual void move(int dx, int dy) = 0;
+	virtual void moveFragment(int dx, int dy, int numberOfFragment) = 0;
+	virtual void setColor(int color) = 0;
+	virtual bool isOnFigure(int x, int y) = 0;
+	virtual int isOnFragment(int x, int y) = 0;
+	virtual char figureName() = 0;
+	virtual int findCenter(char coord) = 0;
+	virtual int getX(int numberOfDot = 0) = 0;
+	virtual int getY(int numberOfDor = 0) = 0;
+	virtual int getNumOfAngles() = 0;
 protected:
 	int color;
 	int numOfAngles;
@@ -46,7 +46,7 @@ public:
 	bool isOnFigure(int x, int y);
 	int isOnFragment(int x, int y);
 	char figureName();
-	Dot findCenter();
+	int findCenter(char coord);
 	int getX(int numberOfDot = 0);
 	int getY(int numberOfDot = 0);
 	int getNumOfAngles();
@@ -60,7 +60,7 @@ public:
 	Line() : Figure() {
 		for (int i = 0; i < 2; i++)
 		{
-			Dots.append(new Dot(0, 0));
+			Dots.append(new Dot);
 		}
 		this->numOfAngles = 2;
 	};
@@ -79,7 +79,7 @@ public:
 	bool isOnFigure(int x, int y);
 	int isOnFragment(int x, int y);
 	char figureName();
-	Dot findCenter();
+	int findCenter(char coord);
 	int getX(int numberOfDot = 0);
 	int getY(int numberOfDor = 0);
 	int getNumOfAngles();
@@ -113,7 +113,7 @@ public:
 	bool isOnFigure(int x, int y);
 	int isOnFragment(int x, int y);
 	char figureName();
-	Dot findCenter();
+	int findCenter(char coord);
 	int getX(int numberOfDot = 0);
 	int getY(int numberOfDor = 0);
 	int getNumOfAngles();

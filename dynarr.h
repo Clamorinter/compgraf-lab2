@@ -1,11 +1,11 @@
 #pragma once
 
-template <class T>
+template <typename T>
 class dynarr
 {
 public:
 	dynarr() {
-		arr = new T*;
+		arr = new T;
 		count = 0;
 	}
 	dynarr(int n) {
@@ -17,10 +17,23 @@ public:
 		delete[] arr;
 	}
 	T* arr;
-	void append();
-	void append(T elem);
-	void decrease();
-	int getLength();
+	void append()
+	{
+		changeLength(1);
+	}
+	void append(T elem)
+	{
+		changeLength(1);
+		arr[count - 1] = elem;
+	}
+	void decrease()
+	{
+		changeLength(-1);
+	}
+	int getLength()
+	{
+		return 0;
+	}
 private:
 	int count;
 	void changeLength(int i) // возможен баг при удалении массива

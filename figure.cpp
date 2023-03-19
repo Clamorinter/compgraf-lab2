@@ -26,6 +26,7 @@ bool Dot::isOnFigure(int x, int y)
 				return true;
 			}
 		}
+	return false;
 }
 int Dot::isOnFragment(int x, int y)
 {
@@ -35,12 +36,19 @@ char Dot::figureName()
 {
 	return 'D';
 }
-Dot Dot::findCenter()
+int Dot::findCenter(char coord)
 {
-	Dot center(x, y);
-	return center;
+	if (coord == 'x')
+	{
+		return x;
+	}
+	if (coord == 'y')
+	{
+		return y;
+	}
+	return -1;
 }
-int Dot::getX(int numberOfDot = 0)
+int Dot::getX(int numberOfDot)
 {
 	if (numberOfDot == 0)
 	{
@@ -48,7 +56,7 @@ int Dot::getX(int numberOfDot = 0)
 	}
 	return 0;
 }
-int Dot::getY(int numberOfDot = 0)
+int Dot::getY(int numberOfDot)
 {
 	if (numberOfDot == 0)
 	{
@@ -95,7 +103,7 @@ void Line::zoom(float multiplier, int centerx, int centery)
 	if (multiplier < 1.0)
 	{
 		float rad = atan((float)abs(y2-y1) / (float)abs(x2-x1));
-		rotate(0.78539 - rad, centerx, centery);
+		rotate((float)0.78539 - rad, centerx, centery);
 		if (abs(new_x1 - x1) <= 1 || abs(new_y1 - y1) <= 1 || abs(new_x2 - x2) <= 1 || abs(new_y2 - y2) <= 1)
 		{
 			new_x1 = x1;
@@ -104,7 +112,7 @@ void Line::zoom(float multiplier, int centerx, int centery)
 			new_y2 = y2;
 			
 		}
-		rotate(rad - 0.78539, centerx, centery);
+		rotate(rad - (float)0.78539, centerx, centery);
 	}
 	moveFragment(new_x1 - x1, new_y1 - y1, 0);
 	moveFragment(new_x2 - x2, new_y2 - y2, 1);
@@ -188,23 +196,31 @@ char Line::figureName()
 {
 	return 'L';
 }
-Dot Line::findCenter()
+int Line::findCenter(char coord)
 {
-	int x = 0;
-	int y = 0;
-	for (int i = 0; i < numOfAngles; i++)
+	int cordin = 0;
+	if (coord == 'x')
 	{
-		x += Dots.arr[i]->getX();
-		y += Dots.arr[i]->getY();
+		for (int i = 0; i < numOfAngles; i++)
+		{
+			cordin += Dots.arr[i]->getX();
+		}
 	}
-	x = (int)round((float)x / 2.0);
-	y = (int)round((float)y / 2.0);
+	if (coord == 'y')
+	{
+		for (int i = 0; i < numOfAngles; i++)
+		{
+			cordin += Dots.arr[i]->getY();
+		}
+	}
+	cordin = (int)round((float)cordin / 2.0);
+	return cordin;
 }
-int Line::getX(int numberOfDot = 0)
+int Line::getX(int numberOfDot)
 {
 	return Dots.arr[numberOfDot]->getX();
 }
-int Line::getY(int numberOfDot = 0)
+int Line::getY(int numberOfDot)
 {
 	return Dots.arr[numberOfDot]->getY();
 }
@@ -311,5 +327,5 @@ void Polygon::setColor(int color)
 }
 bool Polygon::isOnFigure(int x, int y)
 {
-
+	return true;
 }
