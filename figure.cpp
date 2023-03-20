@@ -325,7 +325,31 @@ void Polygon::setColor(int color)
 {
 	this->color = color;
 }
-bool Polygon::isOnFigure(int x, int y)
+bool Polygon::isOnFigure(int x, int y) // need to work
 {
-	return true;
+	return false;
+}
+int Polygon::isOnFragment(int x, int y) //need to work
+{
+	return 0;
+}
+char Polygon::figureName()
+{
+	return 'P';
+}
+int Polygon::findCenter(char coord) //need to work
+{
+	return 0;
+}
+int Polygon::getX(int numberOfDot) //need to work
+{
+	return 0;
+}
+int Polygon::getY(int numberOfDot) //need to work
+{
+	return 0;
+}
+int Polygon::getNumOfAngles()
+{
+	return this->numOfAngles;
 }
