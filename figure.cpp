@@ -190,7 +190,7 @@ int Line::isOnFragment(int x, int y)
 			return i;
 		}
 	}
-	return 0;
+	return -1;
 }
 char Line::figureName()
 {
@@ -199,21 +199,22 @@ char Line::figureName()
 int Line::findCenter(char coord)
 {
 	int cordin = 0;
-	if (coord == 'x')
+	switch (coord)
 	{
+	case 'x':
 		for (int i = 0; i < numOfAngles; i++)
 		{
 			cordin += Dots.arr[i]->getX();
 		}
-	}
-	if (coord == 'y')
-	{
+		break;
+	case 'y':
 		for (int i = 0; i < numOfAngles; i++)
 		{
 			cordin += Dots.arr[i]->getY();
 		}
+		break;
 	}
-	cordin = (int)round((float)cordin / 2.0);
+	cordin = (int)round((float)cordin / numOfAngles);
 	return cordin;
 }
 int Line::getX(int numberOfDot)
@@ -329,25 +330,61 @@ bool Polygon::isOnFigure(int x, int y) // need to work
 {
 	return false;
 }
-int Polygon::isOnFragment(int x, int y) //need to work
+int Polygon::isOnFragment(int x, int y)
 {
-	return 0;
+	int answer;
+	for (int i = 0; i < numOfAngles; i++)
+	{
+		answer = Lines.arr[i]->isOnFragment(x, y);
+		if (answer != -1)
+		{
+			return answer + i;
+		}
+		if (Lines.arr[i]->isOnFigure(x, y))
+		{
+			return numOfAngles + i;
+		}
+	}
+	return -1;
 }
 char Polygon::figureName()
 {
 	return 'P';
 }
-int Polygon::findCenter(char coord) //need to work
+int Polygon::findCenter(char coord)
 {
-	return 0;
+	int cordin = 0;
+	switch (coord)
+	{
+	case 'x':
+		for (int i = 0; i < numOfAngles; i++)
+		{
+			for (int j = 0; j < 2; j++)
+			{
+				cordin += Lines.arr[i]->getX(j);
+			}
+		}
+		break;
+	case 'y':
+		for (int i = 0; i < numOfAngles; i++)
+		{
+			for (int j = 0; j < 2; j++)
+			{
+				cordin += Lines.arr[i]->getY(j);
+			}
+		}
+		break;
+	}
+	cordin = (int)round((float)cordin / numOfAngles);
+	return cordin;
 }
-int Polygon::getX(int numberOfDot) //need to work
+int Polygon::getX(int numberOfDot)
 {
-	return 0;
+	return Lines.arr[numberOfDot]->getX();
 }
-int Polygon::getY(int numberOfDot) //need to work
+int Polygon::getY(int numberOfDot)
 {
-	return 0;
+	return Lines.arr[numberOfDot]->getY();
 }
 int Polygon::getNumOfAngles()
 {
