@@ -1,5 +1,6 @@
 #pragma once
 #include "figure.h"
+#include <iostream>
 
 class WinRender
 {
@@ -13,19 +14,19 @@ public:
 	void doAChange();
 
 	//mouse functions
-	void createmode(int x, int y);
-	void movemode(int x, int y);
-	void dragmode(int x, int y);
-	void choosing(int x, int y);
+	void createmode();
+	void movemode();
+	void dragmode();
+	void choosing();
 	bool mouseProcessing();
 
 	//key functions
-	void movekey(char key);
-	void createkey(char key);
-	void choosekey(char key);
+	void movekey();
+	void createkey();
+	void choosekey();
 	void chooseallkey();
-	void rotatekey(char key);
-	void zoomkey(char key);
+	void rotatekey();
+	void zoomkey();
 	void deletekey();
 	void exitkey();
 
@@ -38,16 +39,17 @@ private:
 
 	dynarr<Figure**> figures;
 	int choosed;
-	int x, y;
+	int x, y, xscreen, yscreen;
 	int numOfFragment;
 	int numOfElements = 0;
-	char c;
+	char key;
 	void* bitmap;
 
 	bool clickflag = false;
 	bool exitflag = false;
 	bool createflag = false;
 	bool moveflag = false;
+	bool dragflag = false;
 	bool changeflag = false;
 	bool chooseflag = false;
 };
