@@ -86,19 +86,18 @@ public:
 	int getNumOfAngles();
 private:
 	dynarr<Figure*> Dots;
-
 };
 
-class Polygon : public Figure {
+class Polygone : public Figure {
 public:
-	Polygon(int numOfAngles) : Figure() {
+	Polygone(int numOfAngles) : Figure() {
 		for (int i = 0; i < numOfAngles; i++)
 		{
 			Lines.append(new Line);
 		}
 		this->numOfAngles = numOfAngles;
 	}
-	~Polygon()
+	~Polygone()
 	{
 		for (int i = numOfAngles-1; i >= 0; i--)
 		{

@@ -37,11 +37,13 @@ public:
 
 private:
 
-	dynarr<Figure**> figures;
+	dynarr<Figure*> figures;
 	int choosed;
 	int x, y, xscreen, yscreen;
 	int numOfFragment;
 	int numOfElements = 0;
+	int counter1, counter2;
+
 	char key;
 	void* bitmap;
 

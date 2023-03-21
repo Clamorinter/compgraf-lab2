@@ -55,6 +55,21 @@ void WinRender::doAKey()
 				createkey();
 			}
 			break;
+		case '1':
+		case '2':
+		case '3':
+		case '4':
+		case '5':
+		case '6':
+		case '7':
+		case '8':
+		case '9':
+			if (createflag)
+			{
+				counter1 = key - '0';
+				counter2 = 0;
+			}
+			break;
 		case 'w':
 		case 'a':
 		case 's':
@@ -106,11 +121,15 @@ void WinRender::doAKey()
 void WinRender::doAChange()
 {
 	setactivepage(1);
-
+	//some activities start
 	bgiout << mousex() << " " << mousey();
 	outstreamxy(10, 10);
-	//some activities
 
+	for (int i = 0; i < numOfElements; i++)
+	{
+		figures.arr[i]->draw();
+	}
+	//some activities end
 	getimage(0, 0, xscreen, yscreen, bitmap);
 	clearviewport();
 	setactivepage(0);
@@ -119,7 +138,43 @@ void WinRender::doAChange()
 
 void WinRender::createmode()
 {
-	std::cout << "It's createmode!!" << std::endl;
+	if (counter1 == 1)
+	{
+		figures.append(new Dot(x, y));
+		numOfElements++;
+		createflag = false;
+		return;
+	} 
+	if (counter1 == 2)
+	{
+		if (counter2 == 0)
+		{
+			figures.append(new Line);
+		}
+		figures.arr[numOfElements]->moveFragment(x, y, counter2);
+		counter2++;
+		if (counter2 == counter1)
+		{
+			numOfElements++;
+			createflag = false;
+			return;
+		}
+	}
+	if (counter1 > 2 && counter1 <= 9)
+	{
+		if (counter2 == 0)
+		{
+			figures.append(new Polygone(counter1));
+		}
+		figures.arr[numOfElements]->moveFragment(x, y, counter2);
+		counter2++;
+		if (counter2 == counter1)
+		{
+			numOfElements++;
+			createflag = false;
+			return;
+		}
+	}
 }
 void WinRender::movemode()
 {
@@ -167,6 +222,7 @@ void WinRender::movekey()
 void WinRender::createkey()
 {
 	std::cout << "It's createkey!!" << std::endl;
+	createflag = true;
 }
 void WinRender::choosekey()
 {

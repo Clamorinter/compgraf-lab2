@@ -231,7 +231,7 @@ int Line::getNumOfAngles()
 }
 
 // Polygon
-void Polygon::draw()
+void Polygone::draw()
 {
 	setcolor(color);
 	for (int i = 0; i < numOfAngles; i++)
@@ -239,7 +239,7 @@ void Polygon::draw()
 		Lines.arr[i]->draw();
 	}
 }
-void Polygon::rotate(float angle, int centerx, int centery)
+void Polygone::rotate(float angle, int centerx, int centery)
 {
 	dynarr<Figure*> centerLines;
 	Figure* line;
@@ -262,7 +262,7 @@ void Polygon::rotate(float angle, int centerx, int centery)
 		moveFragment(new_x - x, new_y - y, i);
 	}
 }
-void Polygon::zoom(float multiplier, int centerx, int centery)
+void Polygone::zoom(float multiplier, int centerx, int centery)
 {
 	dynarr<Figure*> centerLines;
 	Figure* line;
@@ -285,14 +285,14 @@ void Polygon::zoom(float multiplier, int centerx, int centery)
 		moveFragment(new_x - x, new_y - y, i);
 	}
 }
-void Polygon::move(int dx, int dy)
+void Polygone::move(int dx, int dy)
 {
 	for (int i = 0; i < numOfAngles; i++)
 	{
 		Lines.arr[i]->move(dx, dy);
 	}
 }
-void Polygon::moveFragment(int dx, int dy, int numberOfFragment)
+void Polygone::moveFragment(int dx, int dy, int numberOfFragment)
 {
 	if (numberOfFragment < numOfAngles) // Dots
 	{
@@ -322,15 +322,15 @@ void Polygon::moveFragment(int dx, int dy, int numberOfFragment)
 		Lines.arr[next_line]->moveFragment(dx, dy, 0);
 	}
 }
-void Polygon::setColor(int color)
+void Polygone::setColor(int color)
 {
 	this->color = color;
 }
-bool Polygon::isOnFigure(int x, int y) // need to work
+bool Polygone::isOnFigure(int x, int y) // need to work
 {
 	return false;
 }
-int Polygon::isOnFragment(int x, int y)
+int Polygone::isOnFragment(int x, int y)
 {
 	int answer;
 	for (int i = 0; i < numOfAngles; i++)
@@ -347,11 +347,11 @@ int Polygon::isOnFragment(int x, int y)
 	}
 	return -1;
 }
-char Polygon::figureName()
+char Polygone::figureName()
 {
 	return 'P';
 }
-int Polygon::findCenter(char coord)
+int Polygone::findCenter(char coord)
 {
 	int cordin = 0;
 	switch (coord)
@@ -378,15 +378,15 @@ int Polygon::findCenter(char coord)
 	cordin = (int)round((float)cordin / numOfAngles);
 	return cordin;
 }
-int Polygon::getX(int numberOfDot)
+int Polygone::getX(int numberOfDot)
 {
 	return Lines.arr[numberOfDot]->getX();
 }
-int Polygon::getY(int numberOfDot)
+int Polygone::getY(int numberOfDot)
 {
 	return Lines.arr[numberOfDot]->getY();
 }
-int Polygon::getNumOfAngles()
+int Polygone::getNumOfAngles()
 {
 	return this->numOfAngles;
 }

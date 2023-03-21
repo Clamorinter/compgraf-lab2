@@ -55,10 +55,8 @@ private:
 			{
 				T* buff = new T[count + i];
 				memcpy(buff, arr, sizeof(T) * (count+i));
-				for (int j = i; j < 0; j++)
-				{
-					delete arr[count + j];
-				}
+				delete[] arr;
+				arr = buff;
 				count += i;
 			}
 		}
