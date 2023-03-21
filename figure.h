@@ -68,6 +68,7 @@ public:
 		for (int i = 1; i >= 0; i--)
 		{
 			delete Dots.arr[i];
+			Dots.decrease();
 		}
 	}
 	void draw();
@@ -102,6 +103,7 @@ public:
 		for (int i = numOfAngles-1; i >= 0; i--)
 		{
 			delete Lines.arr[i];
+			Lines.decrease();
 		}
 	}
 	void draw();

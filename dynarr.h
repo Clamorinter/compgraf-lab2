@@ -32,19 +32,35 @@ public:
 	}
 	int getLength()
 	{
-		return 0;
+		return count;
 	}
 private:
 	int count;
 	void changeLength(int i) // возможен баг при удалении массива
 	{
-		T* buff = new T[count + i];
-		if (count != 0)
+		if (i >= 0)
 		{
-			memcpy(buff, arr, sizeof(T) * count + (i < 0) ? i : 0);
-			delete[] arr;
+			T* buff = new T[count + i];
+			if (count != 0)
+			{
+				memcpy(buff, arr, sizeof(T) * count);
+				delete[] arr;
+			}
+			arr = buff;
+			count += i;
 		}
-		arr = buff;
-		count += i;
+		else
+		{
+			if (count != 0)
+			{
+				T* buff = new T[count + i];
+				memcpy(buff, arr, sizeof(T) * (count+i));
+				for (int j = i; j < 0; j++)
+				{
+					delete arr[count + j];
+				}
+				count += i;
+			}
+		}
 	}
 };

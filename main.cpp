@@ -1,4 +1,4 @@
-#include <Windows.h>
+//#include <Windows.h>
 #include "figure.h"
 #include <iostream>
 
@@ -9,31 +9,31 @@ bool mouseprocessing(int& x, int& y, bool& clicked);
 
 int main(void)
 {
-	HWND hwnd;
-	initwindow(X_SCREEN, Y_SCREEN, "Lines");
-	setbkcolor(15);
-
-	//hwnd = GetConsoleWindow();
-	//ShowWindow(hwnd, SW_SHOW);
-
-	hwnd = FindWindowA(0, "Lines");
-	void* bitmap = (void*)malloc(imagesize(0, 0, X_SCREEN, Y_SCREEN));
-	setvisualpage(0);
-	
 	dynarr<Figure**> figures;
 	int x, y;
-
-	bool clicked = false;
-
 	char c;
 
+
+	bool clickflag = false;
+	bool exitflag = false;
+	bool createflag = false;
+	bool moveflag = false;
+	bool changeflag = false;
+
+	initwindow(X_SCREEN, Y_SCREEN, "Lines");
+	setbkcolor(15);
+	void* bitmap = (void*)malloc(imagesize(0, 0, X_SCREEN, Y_SCREEN));
+	setvisualpage(0);
 	setcolor(0);
+
+	//HWND hwnd = GetConsoleWindow();
+	//ShowWindow(hwnd, SW_SHOW);
 
 	while (1)
 	{
 		delay(17);
 
-		if (mouseprocessing(x, y, clicked)) //working probably how I need
+		if (mouseprocessing(x, y, clickflag)) //working probably how I need
 		{
 			std::cout << x << " " << y << std::endl; 
 		}

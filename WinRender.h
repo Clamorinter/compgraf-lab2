@@ -39,8 +39,10 @@ private:
 	dynarr<Figure**> figures;
 	int choosed;
 	int x, y;
-	int numOfElement;
+	int numOfFragment;
+	int numOfElements = 0;
 	char c;
+	void* bitmap;
 
 	bool clickflag = false;
 	bool exitflag = false;
