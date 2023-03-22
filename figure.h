@@ -1,6 +1,5 @@
 #pragma once
 #define BASE_COLOR 0
-#define ERROR_OF_POINTER 10
 #include "dynarr.h"
 #include <cmath>
 

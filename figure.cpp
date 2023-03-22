@@ -1,5 +1,7 @@
 #include "figure.h"
 
+#include <iostream>
+
 // Dot
 void Dot::draw()
 {
@@ -18,14 +20,10 @@ void Dot::setColor(int color)
 }
 bool Dot::isOnFigure(int x, int y)
 {
-	for (int ix = x - ERROR_OF_POINTER; ix <= x + ERROR_OF_POINTER; ix++)
-		for (int iy = y - ERROR_OF_POINTER; iy <= y + ERROR_OF_POINTER; iy++)
-		{
-			if (this->x == ix && this->y == iy)
-			{
-				return true;
-			}
-		}
+	if (this->x == x && this->y == y)
+	{
+		return true;
+	}
 	return false;
 }
 int Dot::isOnFragment(int x, int y)
@@ -142,43 +140,34 @@ bool Line::isOnFigure(int x, int y)
 	int x2 = Dots.arr[1]->getX();
 	int y2 = Dots.arr[1]->getY();
 	bool ends;
-	for (int i = x - ERROR_OF_POINTER; i <= x + ERROR_OF_POINTER; i++)
+	xx = (x - x1) * (y2 - y1);
+	yy = (y - y1) * (x2 - x1);
+	ends = true;
+	if (abs(xx - yy) <= abs(y2 - y1 + x2 - x1) || abs(xx - yy) <= abs(y2 - y1 - x2 + x1))
 	{
-		for (int j = y - ERROR_OF_POINTER; j <= y + ERROR_OF_POINTER; j++)
+		if (x2 > x1)
 		{
-			xx = (i - x1) * (y2 - y1);
-			yy = (j - y1) * (x2 - x1);
-			ends = true;
-			if (abs(xx - yy) <= abs(y2 - y1 + x2 - x1) || abs(xx - yy) <= abs(y2 - y1 - x2 + x1))
-			{
-				if (x2 - x1 > ERROR_OF_POINTER)
-				{
-					if (x < x1 || x > x2)
-						ends = false;
-				}
-				else if (x1 - x2 > ERROR_OF_POINTER)
-				{
-					if (x > x1 || x < x2)
-						ends = false;
-				}
-				if (y2 - y1 > ERROR_OF_POINTER)
-				{
-					if (y < y1 || y > y2)
-						ends = false;
-				}
-				else if (y1 - y2 > ERROR_OF_POINTER)
-				{
-					if (y > y1 || y < y2)
-						ends = false;
-				}
-			}
-			else
+			if (x < x1 || x > x2)
 				ends = false;
-
-			if (ends)
-				return ends;
+		}
+		else if (x1 > x2)
+		{
+			if (x > x1 || x < x2)
+				ends = false;
+		}
+		if (y2 > y1)
+		{
+			if (y < y1 || y > y2)
+				ends = false;
+		}
+		else if (y1 > y2)
+		{
+			if (y > y1 || y < y2)
+				ends = false;
 		}
 	}
+	else
+		ends = false;
 	return ends;
 }
 int Line::isOnFragment(int x, int y)
@@ -326,9 +315,63 @@ void Polygone::setColor(int color)
 {
 	this->color = color;
 }
-bool Polygone::isOnFigure(int x, int y) // need to work
+bool Polygone::isOnFigure(int x, int y) 
 {
-	return false;
+	int countx_left = 0, countx_right = 0;
+	bool errorflag = false;
+
+	for (int i = 0; i < numOfAngles; i++)
+	{
+		if (Lines.arr[i]->isOnFigure(x, y))
+		{
+			return true;
+		}
+		for (int j = 0; j <= x; j++)
+		{
+			if (Lines.arr[i]->isOnFigure(j, y))
+			{
+				if (!errorflag)
+				{
+					countx_left++;
+					if (countx_left > 1)
+					{
+						return false;
+					}
+					errorflag = true;
+				}
+				break;
+			}
+			else
+			{
+				errorflag = false;
+			}
+		}
+		for (int j = 1200; j >= x; j--)
+		{
+			if (Lines.arr[i]->isOnFigure(j, y))
+			{
+				if (!errorflag)
+				{
+					countx_right++;
+					if (countx_right > 1)
+					{
+						return false;
+					}
+					errorflag = true;
+				}
+				break;
+			}
+			else
+			{
+				errorflag = false;
+			}
+		}
+	}
+	if (countx_left != 1 || countx_right != 1)
+	{
+		return false;
+	}
+	return true;
 }
 int Polygone::isOnFragment(int x, int y)
 {

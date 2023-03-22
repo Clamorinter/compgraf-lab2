@@ -184,9 +184,32 @@ void WinRender::dragmode()
 {
 	std::cout << "It's dragmode!!" << std::endl;
 }
+bool WinRender::isDotOnFigure()
+{
+	const int error = 10;
+
+	for (int n = 0; n < numOfElements; n++)
+	{
+		for (int i = x - error; i <= x + error; i++)
+		{
+			for (int j = y - error; j <= y + error; j++)
+			{
+				if (figures.arr[n]->isOnFigure(i, j))
+				{
+					choosed = n;
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
 void WinRender::choosing()
 {
-	std::cout << "It's choosing!!" << std::endl;
+	if (isDotOnFigure())
+	{
+		std::cout << choosed << std::endl;
+	}
 }
 bool WinRender::mouseProcessing()
 {

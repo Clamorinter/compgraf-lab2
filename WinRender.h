@@ -33,6 +33,7 @@ public:
 	//menu function
 	void menu();
 	//flag functions
+	bool isDotOnFigure();
 	bool isExit();
 
 private:
