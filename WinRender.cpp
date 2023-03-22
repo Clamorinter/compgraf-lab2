@@ -41,6 +41,12 @@ void WinRender::doAMouse()
 			movemode();
 		}
 	}
+	else if (dragflag || moveflag)
+	{
+		dragflag = false;
+		moveflag = false;
+		figures.arr[choosed]->setColor(9);
+	}
 }
 void WinRender::doAKey()
 {
@@ -122,6 +128,7 @@ void WinRender::doAChange()
 {
 	setactivepage(1);
 	//some activities start
+	setcolor(0);
 	bgiout << mousex() << " " << mousey();
 	outstreamxy(10, 10);
 
@@ -150,9 +157,16 @@ void WinRender::createmode()
 		if (counter2 == 0)
 		{
 			figures.append(new Line);
+			past_x = 0;
+			past_y = 0;
 		}
-		figures.arr[numOfElements]->moveFragment(x, y, counter2);
-		counter2++;
+		if (past_x != x || past_y != y)
+		{
+			figures.arr[numOfElements]->moveFragment(x, y, counter2);
+			past_x = x;
+			past_y = y;
+			counter2++;
+		}
 		if (counter2 == counter1)
 		{
 			numOfElements++;
@@ -165,9 +179,16 @@ void WinRender::createmode()
 		if (counter2 == 0)
 		{
 			figures.append(new Polygone(counter1));
+			past_x = 0;
+			past_y = 0;
 		}
-		figures.arr[numOfElements]->moveFragment(x, y, counter2);
-		counter2++;
+		if (past_x != x || past_y != y)
+		{
+			figures.arr[numOfElements]->moveFragment(x, y, counter2);
+			past_x = x;
+			past_y = y;
+			counter2++;
+		}
 		if (counter2 == counter1)
 		{
 			numOfElements++;
@@ -178,11 +199,65 @@ void WinRender::createmode()
 }
 void WinRender::movemode()
 {
-	std::cout << "It's movemode!!" << std::endl;
+	const int error = 10;
+	if (!moveflag)
+	{
+		for (int i = x - error; i <= x + error; i++)
+		{
+			for (int j = y - error; j <= y + error; j++)
+			{
+				if (figures.arr[choosed]->isOnFigure(i, j))
+				{
+					moveflag = true;
+					past_x = x;
+					past_y = y;
+					figures.arr[choosed]->setColor(1);
+					break;
+				}
+			}
+			if (moveflag)
+			{
+				break;
+			}
+		}
+	}
+	else
+	{
+		figures.arr[choosed]->move(x - past_x, y - past_y);
+		past_x = x;
+		past_y = y;
+	}
 }
-void WinRender::dragmode()
+void WinRender::dragmode() // search process needs optimization
 {
-	std::cout << "It's dragmode!!" << std::endl;
+	const int error = 10;
+	if (!dragflag)
+	{
+		for (int i = x - error; i <= x + error; i++)
+		{
+			for (int j = y - error; j <= y + error; j++)
+			{
+				counter2 = figures.arr[choosed]->isOnFragment(i, j);
+				if (counter2 != -1)
+				{
+					dragflag = true;
+					counter1 = counter2;
+					figures.arr[choosed]->setColor(12);
+					past_x = x;
+					past_y = y;
+					if (counter2 < figures.arr[choosed]->getNumOfAngles()) break;
+				}
+			}
+			if (counter2 < figures.arr[choosed]->getNumOfAngles() && counter2 != -1) break;
+		}
+	}
+	else
+	{
+		std::cout << counter1 << std::endl;
+		figures.arr[choosed]->moveFragment(x-past_x, y-past_y, counter1);
+		past_x = x;
+		past_y = y;
+	}
 }
 bool WinRender::isDotOnFigure()
 {
@@ -196,6 +271,10 @@ bool WinRender::isDotOnFigure()
 			{
 				if (figures.arr[n]->isOnFigure(i, j))
 				{
+					if (chooseflag)
+					{
+						counter1 = choosed;
+					}
 					choosed = n;
 					return true;
 				}
@@ -208,13 +287,20 @@ void WinRender::choosing()
 {
 	if (isDotOnFigure())
 	{
-		std::cout << choosed << std::endl;
+		if (chooseflag)
+		{
+			if (choosed != counter1)
+			{
+				figures.arr[counter1]->setColor(0);
+			}
+		}
+		chooseflag = true;
+		figures.arr[choosed]->setColor(9);
 	}
+
 }
 bool WinRender::mouseProcessing()
 {
-	int start_x = x;
-	int start_y = y;
 	if (ismouseclick(WM_LBUTTONDOWN))
 	{
 		getmouseclick(WM_LBUTTONDOWN, x, y);
@@ -227,13 +313,11 @@ bool WinRender::mouseProcessing()
 		clickflag = false;
 		return false;
 	}
-	if (ismouseclick(WM_MOUSEMOVE) && clickflag)
+	if (clickflag)
 	{
-		getmouseclick(WM_MOUSEMOVE, x, y);
-		if (start_x != x && start_y != y)
-		{
-			return true;
-		}
+		x = mousex();
+		y = mousey();
+		return true;
 	}
 	return false;
 }

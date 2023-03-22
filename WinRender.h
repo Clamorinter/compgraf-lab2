@@ -40,7 +40,7 @@ private:
 
 	dynarr<Figure*> figures;
 	int choosed;
-	int x, y, xscreen, yscreen;
+	int x, y, xscreen, yscreen, past_x, past_y;
 	int numOfFragment;
 	int numOfElements = 0;
 	int counter1, counter2;

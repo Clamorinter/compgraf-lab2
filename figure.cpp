@@ -222,9 +222,9 @@ int Line::getNumOfAngles()
 // Polygon
 void Polygone::draw()
 {
-	setcolor(color);
 	for (int i = 0; i < numOfAngles; i++)
 	{
+		Lines.arr[i]->setColor(color);
 		Lines.arr[i]->draw();
 	}
 }
@@ -315,7 +315,7 @@ void Polygone::setColor(int color)
 {
 	this->color = color;
 }
-bool Polygone::isOnFigure(int x, int y) 
+bool Polygone::isOnFigure(int x, int y) //need to wotk on
 {
 	int countx_left = 0, countx_right = 0;
 	bool errorflag = false;
