@@ -82,40 +82,40 @@ void WinRender::doAKey()
 		case 'd':
 			if (chooseflag && !createflag && !moveflag && !dragflag)
 			{
-				movekey();
+				movekey(); //need work
 			}
 			break;
 		case 'q':
 		case 'e':
 			if (chooseflag && !createflag && !moveflag && !dragflag)
 			{
-				rotatekey();
+				rotatekey(); //need work
 			}
 			break;
 		case '-':
 		case '=':
 			if (chooseflag && !createflag && !moveflag && !dragflag)
 			{
-				zoomkey();
+				zoomkey(); //need work
 			}
 			break;
 		case 'r':
 		case 'f':
 			if (chooseflag && !createflag && !moveflag && !dragflag)
 			{
-				choosekey();
+				choosekey(); //need work
 			}
 			break;
 		case '`':
 			if (!createflag && !moveflag && !dragflag)
 			{
-				chooseallkey();
+				chooseallkey(); //need work
 			}
 			break;
 		case '\\':
 			if (chooseflag && !createflag && !moveflag && !dragflag)
 			{
-				deletekey();
+				deletekey(); //need work
 			}
 			break;
 		case '0':
@@ -322,9 +322,23 @@ bool WinRender::mouseProcessing()
 	return false;
 }
 
-void WinRender::movekey()
+void WinRender::movekey() // delay problem
 {
-	std::cout << "It's movekey!!" << std::endl;
+	switch (key)
+	{
+	case 'w':
+		figures.arr[choosed]->move(0, -5);
+		break;
+	case 's':
+		figures.arr[choosed]->move(0, 5);
+		break;
+	case 'a':
+		figures.arr[choosed]->move(-5, 0);
+		break;
+	case 'd':
+		figures.arr[choosed]->move(5, 0);
+		break;
+	}
 }
 void WinRender::createkey()
 {
