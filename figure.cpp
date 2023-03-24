@@ -1,7 +1,5 @@
 #include "figure.h"
 
-#include <iostream>
-
 // Dot
 void Dot::draw()
 {
@@ -74,46 +72,36 @@ void Line::draw()
 }
 void Line::rotate(float angle, int centerx, int centery)
 {
+	move(-centerx, -centery);
 	int x1 = Dots.arr[0]->getX();
 	int y1 = Dots.arr[0]->getY();
 	int x2 = Dots.arr[1]->getX();
 	int y2 = Dots.arr[1]->getY();
-	move(-centerx, -centery);
-	int new_x1 = (int)round((float)x1 * cos(angle)) + (int)round((float)y1 * sin(angle));
-	int new_y1 = -(int)round((float)x1 * sin(angle)) + (int)round((float)y1 * cos(angle));
-	int new_x2 = (int)round((float)x2 * cos(angle)) + (int)round((float)y2 * sin(angle));
-	int new_y2 = -(int)round((float)x2* sin(angle)) + (int)round((float)y2 * cos(angle));
+	int new_x1 = (int)round((float)x1 * cos(angle) + (float)y1 * sin(angle));
+	int new_y1 = (int)round(-(float)x1 * sin(angle) + (float)y1 * cos(angle));
+	int new_x2 = (int)round((float)x2 * cos(angle) + (float)y2 * sin(angle));
+	int new_y2 = (int)round(-(float)x2* sin(angle) + (float)y2 * cos(angle));
 	moveFragment(new_x1 - x1, new_y1 - y1, 0);
 	moveFragment(new_x2 - x2, new_y2 - y2, 1);
 	move(centerx, centery);
 }
 void Line::zoom(float multiplier, int centerx, int centery)
 {
+	const int zoom_min = 100;
+	move(-centerx, -centery);
 	int x1 = Dots.arr[0]->getX();
 	int y1 = Dots.arr[0]->getY();
 	int x2 = Dots.arr[1]->getX();
 	int y2 = Dots.arr[1]->getY();
-	move(-centerx, -centery);
 	int new_x1 = (int)round((float)x1 * multiplier);
 	int new_y1 = (int)round((float)y1 * multiplier);
 	int new_x2 = (int)round((float)x2 * multiplier);
 	int new_y2 = (int)round((float)y2 * multiplier);
-	if (multiplier < 1.0)
+	if (abs(new_x1 - new_x2) > zoom_min || abs(new_y1 - new_y2) > zoom_min || multiplier > 1.0)
 	{
-		float rad = atan((float)abs(y2-y1) / (float)abs(x2-x1));
-		rotate((float)0.78539 - rad, centerx, centery);
-		if (abs(new_x1 - x1) <= 1 || abs(new_y1 - y1) <= 1 || abs(new_x2 - x2) <= 1 || abs(new_y2 - y2) <= 1)
-		{
-			new_x1 = x1;
-			new_y1 = y1;
-			new_x2 = x2;
-			new_y2 = y2;
-			
-		}
-		rotate(rad - (float)0.78539, centerx, centery);
+		moveFragment(new_x1 - x1, new_y1 - y1, 0);
+		moveFragment(new_x2 - x2, new_y2 - y2, 1);
 	}
-	moveFragment(new_x1 - x1, new_y1 - y1, 0);
-	moveFragment(new_x2 - x2, new_y2 - y2, 1);
 	move(centerx, centery);
 }
 void Line::move(int dx, int dy)
@@ -203,7 +191,7 @@ int Line::findCenter(char coord)
 		}
 		break;
 	}
-	cordin = (int)round((float)cordin / numOfAngles);
+	cordin = (int)round((float)cordin / (float)numOfAngles);
 	return cordin;
 }
 int Line::getX(int numberOfDot)
@@ -239,7 +227,6 @@ void Polygone::rotate(float angle, int centerx, int centery)
 		line->moveFragment(Lines.arr[i]->getX(), Lines.arr[i]->getY(), 0);
 		line->moveFragment(centerx, centery, 1);
 		centerLines.append(line);
-		delete line;
 	}
 	for (int i = 0; i < numOfAngles; i++)
 	{
@@ -250,28 +237,46 @@ void Polygone::rotate(float angle, int centerx, int centery)
 		y = Lines.arr[i]->getY();
 		moveFragment(new_x - x, new_y - y, i);
 	}
+	for (int i = numOfAngles - 1; i >= 0; i--)
+	{
+		delete centerLines.arr[i];
+		centerLines.decrease();
+	}
 }
 void Polygone::zoom(float multiplier, int centerx, int centery)
 {
 	dynarr<Figure*> centerLines;
 	Figure* line;
 	int new_x, new_y, x, y;
+	bool zoomminflag = true;
+	int zoommin = 110;
 	for (int i = 0; i < numOfAngles; i++)
 	{
 		line = new Line;
 		line->moveFragment(Lines.arr[i]->getX(), Lines.arr[i]->getY(), 0);
 		line->moveFragment(centerx, centery, 1);
+		if (abs(centerx - Lines.arr[i]->getX()) <= zoommin && abs(centery - Lines.arr[i]->getY()) <= zoommin && multiplier < 1.0)
+		{
+			zoomminflag = false;
+		}
 		centerLines.append(line);
-		delete line;
 	}
-	for (int i = 0; i < numOfAngles; i++)
+	if (zoomminflag)
 	{
-		centerLines.arr[i]->zoom(multiplier, centerx, centery);
-		new_x = centerLines.arr[i]->getX(0);
-		new_y = centerLines.arr[i]->getY(0);
-		x = Lines.arr[i]->getX();
-		y = Lines.arr[i]->getY();
-		moveFragment(new_x - x, new_y - y, i);
+		for (int i = 0; i < numOfAngles; i++)
+		{
+			centerLines.arr[i]->zoom(multiplier, centerx, centery);
+			new_x = centerLines.arr[i]->getX(0);
+			new_y = centerLines.arr[i]->getY(0);
+			x = Lines.arr[i]->getX();
+			y = Lines.arr[i]->getY();
+			moveFragment(new_x - x, new_y - y, i);
+		}
+	}
+	for (int i = numOfAngles - 1; i >= 0; i--)
+	{
+		delete centerLines.arr[i];
+		centerLines.decrease();
 	}
 }
 void Polygone::move(int dx, int dy)
@@ -402,23 +407,17 @@ int Polygone::findCenter(char coord)
 	case 'x':
 		for (int i = 0; i < numOfAngles; i++)
 		{
-			for (int j = 0; j < 2; j++)
-			{
-				cordin += Lines.arr[i]->getX(j);
-			}
+			cordin += Lines.arr[i]->getX();
 		}
 		break;
 	case 'y':
 		for (int i = 0; i < numOfAngles; i++)
 		{
-			for (int j = 0; j < 2; j++)
-			{
-				cordin += Lines.arr[i]->getY(j);
-			}
+			cordin += Lines.arr[i]->getY();
 		}
 		break;
 	}
-	cordin = (int)round((float)cordin / numOfAngles);
+	cordin = (int)round((float)cordin / (float)numOfAngles);
 	return cordin;
 }
 int Polygone::getX(int numberOfDot)

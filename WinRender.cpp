@@ -1,5 +1,7 @@
 #include "WinRender.h"
 
+#include <iostream>
+
 WinRender::WinRender(int x, int y)
 {
 	initwindow(x, y, "Figures");
@@ -53,6 +55,10 @@ void WinRender::doAKey()
 	if (kbhit())
 	{
 		key = (char)getch();
+		while (kbhit())
+		{
+			getch();
+		}
 		switch (key)
 		{
 		case 'n':
@@ -82,28 +88,28 @@ void WinRender::doAKey()
 		case 'd':
 			if (chooseflag && !createflag && !moveflag && !dragflag)
 			{
-				movekey(); //need work
+				movekey();
 			}
 			break;
 		case 'q':
 		case 'e':
 			if (chooseflag && !createflag && !moveflag && !dragflag)
 			{
-				rotatekey(); //need work
+				rotatekey();
 			}
 			break;
 		case '-':
 		case '=':
 			if (chooseflag && !createflag && !moveflag && !dragflag)
 			{
-				zoomkey(); //need work
+				zoomkey();
 			}
 			break;
 		case 'r':
 		case 'f':
 			if (chooseflag && !createflag && !moveflag && !dragflag)
 			{
-				choosekey(); //need work
+				choosekey();
 			}
 			break;
 		case '`':
@@ -115,7 +121,7 @@ void WinRender::doAKey()
 		case '\\':
 			if (chooseflag && !createflag && !moveflag && !dragflag)
 			{
-				deletekey(); //need work
+				deletekey();
 			}
 			break;
 		case '0':
@@ -253,7 +259,6 @@ void WinRender::dragmode() // search process needs optimization
 	}
 	else
 	{
-		std::cout << counter1 << std::endl;
 		figures.arr[choosed]->moveFragment(x-past_x, y-past_y, counter1);
 		past_x = x;
 		past_y = y;
@@ -342,28 +347,70 @@ void WinRender::movekey() // delay problem
 }
 void WinRender::createkey()
 {
-	std::cout << "It's createkey!!" << std::endl;
 	createflag = true;
 }
 void WinRender::choosekey()
 {
-	std::cout << "It's choosekey!!" << std::endl;
+	switch (key)
+	{
+	case 'r':
+		if (choosed != numOfElements - 1)
+		{
+			figures.arr[choosed++]->setColor(0);
+			figures.arr[choosed]->setColor(9);
+		}
+		break;
+	case 'f':
+		if (choosed != 0)
+		{
+			figures.arr[choosed--]->setColor(0);
+			figures.arr[choosed]->setColor(9);
+		}
+		break;
+	}
 }
 void WinRender::chooseallkey()
 {
-	std::cout << "It's chooseallkey!!" << std::endl;
+
 }
 void WinRender::rotatekey()
 {
-	std::cout << "It's rotatekey!!" << std::endl;
+	int centerx = figures.arr[choosed]->findCenter('x');
+	int centery = figures.arr[choosed]->findCenter('y');
+	switch (key)
+	{
+	case 'q':
+		figures.arr[choosed]->rotate((float)0.05, centerx, centery);
+		break;
+	case 'e':
+		figures.arr[choosed]->rotate((float)-0.05, centerx, centery);
+	}
 }
 void WinRender::zoomkey()
 {
-	std::cout << "It's zoomkey!!" << std::endl;
+	int centerx = figures.arr[choosed]->findCenter('x');
+	int centery = figures.arr[choosed]->findCenter('y');
+	switch (key)
+	{
+	case '=':
+
+		figures.arr[choosed]->zoom((float)1.10, centerx, centery);
+		break;
+	case '-':
+		figures.arr[choosed]->zoom((float)(1.0 / 1.10), centerx, centery);
+		break;
+	}
 }
 void WinRender::deletekey()
 {
-	std::cout << "It's deletekey!!" << std::endl;
+	delete figures.arr[choosed];
+	for (int i = choosed; i < numOfElements - 1; i++)
+	{
+		figures.arr[i] = figures.arr[i + 1];
+	}
+	figures.decrease();
+	numOfElements--;
+	chooseflag = false;
 }
 void WinRender::exitkey()
 {
@@ -372,7 +419,7 @@ void WinRender::exitkey()
 
 void WinRender::menu()
 {
-	std::cout << "It's menu!!" << std::endl;
+
 }
 bool WinRender::isExit()
 {

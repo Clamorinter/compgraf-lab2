@@ -1,6 +1,5 @@
 #pragma once
 #include "figure.h"
-#include <iostream>
 
 class WinRender
 {
