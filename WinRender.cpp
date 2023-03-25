@@ -234,7 +234,7 @@ void WinRender::movemode()
 		past_y = y;
 	}
 }
-void WinRender::dragmode() // search process needs optimization
+void WinRender::dragmode()
 {
 	const int error = 10;
 	if (!dragflag)
@@ -327,7 +327,7 @@ bool WinRender::mouseProcessing()
 	return false;
 }
 
-void WinRender::movekey() // delay problem
+void WinRender::movekey() 
 {
 	switch (key)
 	{

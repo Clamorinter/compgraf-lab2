@@ -87,7 +87,7 @@ void Line::rotate(float angle, int centerx, int centery)
 }
 void Line::zoom(float multiplier, int centerx, int centery)
 {
-	const int zoom_min = 100;
+	const int zoom_min = 80;
 	move(-centerx, -centery);
 	int x1 = Dots.arr[0]->getX();
 	int y1 = Dots.arr[0]->getY();
@@ -218,66 +218,30 @@ void Polygone::draw()
 }
 void Polygone::rotate(float angle, int centerx, int centery)
 {
-	dynarr<Figure*> centerLines;
-	Figure* line;
-	int new_x, new_y, x, y;
 	for (int i = 0; i < numOfAngles; i++)
 	{
-		line = new Line;
-		line->moveFragment(Lines.arr[i]->getX(), Lines.arr[i]->getY(), 0);
-		line->moveFragment(centerx, centery, 1);
-		centerLines.append(line);
-	}
-	for (int i = 0; i < numOfAngles; i++)
-	{
-		centerLines.arr[i]->rotate(angle, centerx, centery);
-		new_x = centerLines.arr[i]->getX(0);
-		new_y = centerLines.arr[i]->getY(0);
-		x = Lines.arr[i]->getX();
-		y = Lines.arr[i]->getY();
-		moveFragment(new_x - x, new_y - y, i);
-	}
-	for (int i = numOfAngles - 1; i >= 0; i--)
-	{
-		delete centerLines.arr[i];
-		centerLines.decrease();
+		Lines.arr[i]->rotate(angle, centerx, centery);
 	}
 }
 void Polygone::zoom(float multiplier, int centerx, int centery)
 {
-	dynarr<Figure*> centerLines;
-	Figure* line;
-	int new_x, new_y, x, y;
-	bool zoomminflag = true;
-	int zoommin = 110;
+	bool zoomflag = true;
+	int zoommin = 90;
 	for (int i = 0; i < numOfAngles; i++)
 	{
-		line = new Line;
-		line->moveFragment(Lines.arr[i]->getX(), Lines.arr[i]->getY(), 0);
-		line->moveFragment(centerx, centery, 1);
 		if (abs(centerx - Lines.arr[i]->getX()) <= zoommin && abs(centery - Lines.arr[i]->getY()) <= zoommin && multiplier < 1.0)
 		{
-			zoomminflag = false;
+			zoomflag = false;
 		}
-		centerLines.append(line);
 	}
-	if (zoomminflag)
+	if (zoomflag)
 	{
 		for (int i = 0; i < numOfAngles; i++)
 		{
-			centerLines.arr[i]->zoom(multiplier, centerx, centery);
-			new_x = centerLines.arr[i]->getX(0);
-			new_y = centerLines.arr[i]->getY(0);
-			x = Lines.arr[i]->getX();
-			y = Lines.arr[i]->getY();
-			moveFragment(new_x - x, new_y - y, i);
+			Lines.arr[i]->zoom(multiplier, centerx, centery);
 		}
 	}
-	for (int i = numOfAngles - 1; i >= 0; i--)
-	{
-		delete centerLines.arr[i];
-		centerLines.decrease();
-	}
+
 }
 void Polygone::move(int dx, int dy)
 {
@@ -320,7 +284,7 @@ void Polygone::setColor(int color)
 {
 	this->color = color;
 }
-bool Polygone::isOnFigure(int x, int y) //need to wotk on
+bool Polygone::isOnFigure(int x, int y) //need to work on irregular polygons
 {
 	int countx_left = 0, countx_right = 0;
 	bool errorflag = false;
