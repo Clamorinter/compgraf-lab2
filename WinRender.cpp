@@ -46,6 +46,8 @@ void WinRender::doAMouse()
 		dragflag = false;
 		moveflag = false;
 		figures.arr[choosed]->setColor(9);
+		counter1 = 0;
+		counter2 = 0;
 	}
 }
 void WinRender::doAKey()
@@ -190,6 +192,8 @@ void WinRender::createmode()
 		{
 			numOfElements++;
 			createflag = false;
+			counter2 = 0;
+			counter1 = 0;
 			return;
 		}
 	}
@@ -212,6 +216,8 @@ void WinRender::createmode()
 		{
 			numOfElements++;
 			createflag = false;
+			counter1 = 0;
+			counter2 = 0;
 			return;
 		}
 	}
@@ -292,6 +298,10 @@ bool WinRender::isDotOnFigure()
 					if (chooseflag)
 					{
 						counter1 = choosed;
+					}
+					else
+					{
+						counter1 = 0;
 					}
 					choosed = n;
 					return true;

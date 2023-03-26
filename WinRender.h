@@ -41,7 +41,7 @@ private:
 	int choosed;
 	int x, y, xscreen, yscreen, past_x, past_y;
 	int numOfElements = 0;
-	int counter1, counter2;
+	int counter1 = 0, counter2 = 0;
 
 	char key = ' ';
 	void* bitmap;
