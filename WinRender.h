@@ -40,11 +40,10 @@ private:
 	dynarr<Figure*> figures;
 	int choosed;
 	int x, y, xscreen, yscreen, past_x, past_y;
-	int numOfFragment;
 	int numOfElements = 0;
 	int counter1, counter2;
 
-	char key;
+	char key = ' ';
 	void* bitmap;
 
 	bool clickflag = false;
@@ -52,6 +51,6 @@ private:
 	bool createflag = false;
 	bool moveflag = false;
 	bool dragflag = false;
-	bool changeflag = false;
 	bool chooseflag = false;
+	bool menuflag = false;
 };

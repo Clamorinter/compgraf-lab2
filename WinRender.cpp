@@ -24,7 +24,7 @@ WinRender::~WinRender()
 
 void WinRender::doAMouse()
 {
-	if (mouseProcessing())
+	if (mouseProcessing() && !menuflag)
 	{
 		if (createflag && !moveflag && !dragflag)
 		{
@@ -62,7 +62,7 @@ void WinRender::doAKey()
 		switch (key)
 		{
 		case 'n':
-			if (!createflag && !moveflag && !dragflag)
+			if (!createflag && !moveflag && !dragflag && !menuflag)
 			{
 				createkey();
 			}
@@ -86,46 +86,60 @@ void WinRender::doAKey()
 		case 'a':
 		case 's':
 		case 'd':
-			if (chooseflag && !createflag && !moveflag && !dragflag)
+			if (chooseflag && !createflag && !moveflag && !dragflag && !menuflag)
 			{
 				movekey();
 			}
 			break;
 		case 'q':
 		case 'e':
-			if (chooseflag && !createflag && !moveflag && !dragflag)
+			if (chooseflag && !createflag && !moveflag && !dragflag && !menuflag)
 			{
 				rotatekey();
 			}
 			break;
 		case '-':
 		case '=':
-			if (chooseflag && !createflag && !moveflag && !dragflag)
+			if (chooseflag && !createflag && !moveflag && !dragflag && !menuflag)
 			{
 				zoomkey();
 			}
 			break;
 		case 'r':
 		case 'f':
-			if (chooseflag && !createflag && !moveflag && !dragflag)
+			if (chooseflag && !createflag && !moveflag && !dragflag && !menuflag)
 			{
 				choosekey();
 			}
 			break;
 		case '`':
-			if (!createflag && !moveflag && !dragflag)
+			if (!createflag && !moveflag && !dragflag && !menuflag)
 			{
 				chooseallkey(); //need work
 			}
 			break;
 		case '\\':
-			if (chooseflag && !createflag && !moveflag && !dragflag)
+			if (chooseflag && !createflag && !moveflag && !dragflag && !menuflag)
 			{
 				deletekey();
 			}
 			break;
+		case 'c':
+			if (!createflag && !moveflag && !dragflag)
+			{
+				if (menuflag)
+				{
+					menuflag = false;
+				}
+				else
+				{
+					menuflag = true;
+				}
+			}
+			break;
 		case '0':
 			exitkey();
+			break;
 		}
 	}
 }
@@ -136,10 +150,12 @@ void WinRender::doAChange()
 	//some activities start
 	setcolor(0);
 	menu();
-
-	for (int i = 0; i < numOfElements; i++)
+	if (!menuflag)
 	{
-		figures.arr[i]->draw();
+		for (int i = 0; i < numOfElements; i++)
+		{
+			figures.arr[i]->draw();
+		}
 	}
 	//some activities end
 	getimage(0, 0, xscreen, yscreen, bitmap);
@@ -434,7 +450,7 @@ void WinRender::chooseallkey()
 {
 	if (numOfElements >= 2)
 	{
-		changeflag = true;
+		chooseflag = true;
 		choosed = -1;
 		for (int i = 0; i < numOfElements; i++)
 		{
@@ -555,27 +571,82 @@ void WinRender::exitkey()
 
 void WinRender::menu()
 {
-	bgiout << mousex() << " " << mousey();
-	outstreamxy(10, 10);
-	bgiout << "Mouse process: ";
-	if (createflag)
+	if (!menuflag)
 	{
-		bgiout << "Creating figure" << std::endl;
-	}
-	else if (dragflag)
-	{
-		bgiout << "Dragging the fragment of figure." << std::endl;
-	}
-	else if (moveflag)
-	{
-		bgiout << "Moving the figure." << std::endl;
+		bgiout << mousex() << " " << mousey();
+		outstreamxy(10, 10);
+		bgiout << "Mouse process: ";
+		if (createflag)
+		{
+			bgiout << "Creating figure.";
+		}
+		else if (dragflag)
+		{
+			bgiout << "Dragging the fragment of figure.";
+		}
+		else if (moveflag)
+		{
+			bgiout << "Moving the figure.";
+		}
+		else
+		{
+			bgiout << "None.";
+		}
+		outstreamxy(10, 30);
+		bgiout << "Key process: ";
+		switch (key)
+		{
+		case 'w':
+		case 'a':
+		case 's':
+		case 'd':
+			if (chooseflag && !createflag && !moveflag && !dragflag)
+			{
+				bgiout << "Moving the figure.";
+			}
+			key = ' ';
+			break;
+		case 'q':
+		case 'e':
+			if (chooseflag && !createflag && !moveflag && !dragflag)
+			{
+				bgiout << "Rotation of the figure.";
+			}
+			key = ' ';
+			break;
+		case '-':
+		case '=':
+			if (chooseflag && !createflag && !moveflag && !dragflag)
+			{
+				bgiout << "Zooming the figure.";
+			}
+			key = ' ';
+			break;
+		default:
+			bgiout << "None.";
+			break;
+		}
+		outstreamxy(10, 50);
+		bgiout << "Press 'c' to see the controls.";
+		outstreamxy(990, 10);
 	}
 	else
 	{
-		bgiout << "None." << std::endl;
+		bgiout << "The keys of program:" << std::endl << std::endl;
+		bgiout << "n - enter in create mode" << std::endl;
+		bgiout << "1-9 - choose a number of angles" << std::endl;
+		bgiout << "r/f - select next/previous figure" << std::endl;
+		bgiout << "w/a/s/d - move selected figure" << std::endl;
+		bgiout << "q/e - rotate selected figure" << std::endl;
+		bgiout << "-/= - zoom selected figure" << std::endl;
+		bgiout << "\\ - delete selected figure" << std::endl;
+		bgiout << "` - choose all figures" << std::endl;
+		bgiout << "c - exit controls" << std::endl;
+		bgiout << "0 - exit the program" << std::endl;
+		outstreamxy(500, 200);
 	}
-	outstreamxy(10, 30);
 }
+
 bool WinRender::isExit()
 {
 	return exitflag;

@@ -16,7 +16,7 @@ int main(void)
 
 	while (!graphscreen.isExit())
 	{
-		delay(15);
+		delay(18);
 
 		graphscreen.doAMouse();
 
