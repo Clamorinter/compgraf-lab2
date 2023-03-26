@@ -135,8 +135,7 @@ void WinRender::doAChange()
 	setactivepage(1);
 	//some activities start
 	setcolor(0);
-	bgiout << mousex() << " " << mousey();
-	outstreamxy(10, 10);
+	menu();
 
 	for (int i = 0; i < numOfElements; i++)
 	{
@@ -332,16 +331,56 @@ void WinRender::movekey()
 	switch (key)
 	{
 	case 'w':
-		figures.arr[choosed]->move(0, -5);
+		if (choosed != -1)
+		{
+			figures.arr[choosed]->move(0, -5);
+		}
+		else
+		{
+			for (int i = 0; i < numOfElements; i++)
+			{
+				figures.arr[i]->move(0, -5);
+			}
+		}
 		break;
 	case 's':
-		figures.arr[choosed]->move(0, 5);
+		if (choosed != -1)
+		{
+			figures.arr[choosed]->move(0, 5);
+		}
+		else
+		{
+			for (int i = 0; i < numOfElements; i++)
+			{
+				figures.arr[i]->move(0, 5);
+			}
+		}
 		break;
 	case 'a':
-		figures.arr[choosed]->move(-5, 0);
+		if (choosed != -1)
+		{
+			figures.arr[choosed]->move(-5, 0);
+		}
+		else
+		{
+			for (int i = 0; i < numOfElements; i++)
+			{
+				figures.arr[i]->move(-5, 0);
+			}
+		}
 		break;
 	case 'd':
-		figures.arr[choosed]->move(5, 0);
+		if (choosed != -1)
+		{
+			figures.arr[choosed]->move(5, 0);
+		}
+		else
+		{
+			for (int i = 0; i < numOfElements; i++)
+			{
+				figures.arr[i]->move(5, 0);
+			}
+		}
 		break;
 	}
 }
@@ -356,14 +395,36 @@ void WinRender::choosekey()
 	case 'r':
 		if (choosed != numOfElements - 1)
 		{
-			figures.arr[choosed++]->setColor(0);
+			if (choosed != -1)
+			{
+				figures.arr[choosed++]->setColor(0);
+			}
+			else
+			{
+				choosed = numOfElements - 1;
+				for (int i = 0; i < numOfElements; i++)
+				{
+					figures.arr[i]->setColor(0);
+				}
+			}
 			figures.arr[choosed]->setColor(9);
 		}
 		break;
 	case 'f':
 		if (choosed != 0)
 		{
-			figures.arr[choosed--]->setColor(0);
+			if (choosed != -1)
+			{
+				figures.arr[choosed--]->setColor(0);
+			}
+			else
+			{
+				choosed = 0;
+				for (int i = 0; i < numOfElements; i++)
+				{
+					figures.arr[i]->setColor(0);
+				}
+			}
 			figures.arr[choosed]->setColor(9);
 		}
 		break;
@@ -371,45 +432,120 @@ void WinRender::choosekey()
 }
 void WinRender::chooseallkey()
 {
-
+	if (numOfElements >= 2)
+	{
+		changeflag = true;
+		choosed = -1;
+		for (int i = 0; i < numOfElements; i++)
+		{
+			figures.arr[i]->setColor(9);
+		}
+	}
 }
 void WinRender::rotatekey()
 {
-	int centerx = figures.arr[choosed]->findCenter('x');
-	int centery = figures.arr[choosed]->findCenter('y');
+	int centerx;
+	int centery;
 	switch (key)
 	{
 	case 'q':
-		figures.arr[choosed]->rotate((float)0.05, centerx, centery);
+		if (choosed != -1)
+		{
+			centerx = figures.arr[choosed]->findCenter('x');
+			centery = figures.arr[choosed]->findCenter('y');
+			figures.arr[choosed]->rotate((float)0.05, centerx, centery);
+		}
+		else
+		{
+			centerx = mousex();
+			centery = mousey();
+			for (int i = 0; i < numOfElements; i++)
+			{
+				figures.arr[i]->rotate((float)0.05, centerx, centery);
+			}
+		}
 		break;
 	case 'e':
-		figures.arr[choosed]->rotate((float)-0.05, centerx, centery);
+		if (choosed != -1)
+		{
+			centerx = figures.arr[choosed]->findCenter('x');
+			centery = figures.arr[choosed]->findCenter('y');
+			figures.arr[choosed]->rotate((float)-0.05, centerx, centery);
+		}
+		else
+		{
+			centerx = mousex();
+			centery = mousey();
+			for (int i = 0; i < numOfElements; i++)
+			{
+				figures.arr[i]->rotate((float)-0.05, centerx, centery);
+			}
+		}
 	}
 }
 void WinRender::zoomkey()
 {
-	int centerx = figures.arr[choosed]->findCenter('x');
-	int centery = figures.arr[choosed]->findCenter('y');
+	int centerx;
+	int centery;
 	switch (key)
 	{
 	case '=':
-
-		figures.arr[choosed]->zoom((float)1.10, centerx, centery);
+		if (choosed != -1)
+		{
+			centerx = figures.arr[choosed]->findCenter('x');
+			centery = figures.arr[choosed]->findCenter('y');
+			figures.arr[choosed]->zoom((float)1.10, centerx, centery);
+		}
+		else
+		{
+			centerx = mousex();
+			centery = mousey();
+			for (int i = 0; i < numOfElements; i++)
+			{
+				figures.arr[i]->zoom((float)1.10, centerx, centery);
+			}
+		}
 		break;
 	case '-':
-		figures.arr[choosed]->zoom((float)(1.0 / 1.10), centerx, centery);
+		if (choosed != -1)
+		{
+			centerx = figures.arr[choosed]->findCenter('x');
+			centery = figures.arr[choosed]->findCenter('y');
+			figures.arr[choosed]->zoom((float)(1.0 / 1.10), centerx, centery);
+		}
+		else
+		{
+			centerx = mousex();
+			centery = mousey();
+			for (int i = 0; i < numOfElements; i++)
+			{
+				figures.arr[i]->zoom((float)(1.0 / 1.10), centerx, centery);
+			}
+		}
 		break;
 	}
 }
 void WinRender::deletekey()
 {
-	delete figures.arr[choosed];
-	for (int i = choosed; i < numOfElements - 1; i++)
+	if (choosed != -1)
 	{
-		figures.arr[i] = figures.arr[i + 1];
+		delete figures.arr[choosed];
+		for (int i = choosed; i < numOfElements - 1; i++)
+		{
+			figures.arr[i] = figures.arr[i + 1];
+		}
+		figures.decrease();
+		numOfElements--;
 	}
-	figures.decrease();
-	numOfElements--;
+	else
+	{
+		for (int i = numOfElements - 1; i >= 0; i--)
+		{
+			delete figures.arr[i];
+			figures.decrease();
+		}
+		numOfElements = 0;
+	}
 	chooseflag = false;
 }
 void WinRender::exitkey()
@@ -419,7 +555,26 @@ void WinRender::exitkey()
 
 void WinRender::menu()
 {
-
+	bgiout << mousex() << " " << mousey();
+	outstreamxy(10, 10);
+	bgiout << "Mouse process: ";
+	if (createflag)
+	{
+		bgiout << "Creating figure" << std::endl;
+	}
+	else if (dragflag)
+	{
+		bgiout << "Dragging the fragment of figure." << std::endl;
+	}
+	else if (moveflag)
+	{
+		bgiout << "Moving the figure." << std::endl;
+	}
+	else
+	{
+		bgiout << "None." << std::endl;
+	}
+	outstreamxy(10, 30);
 }
 bool WinRender::isExit()
 {
