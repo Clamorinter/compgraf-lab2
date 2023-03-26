@@ -229,7 +229,7 @@ void Polygone::zoom(float multiplier, int centerx, int centery)
 	int zoommin = 90;
 	for (int i = 0; i < numOfAngles; i++)
 	{
-		if (abs(centerx - Lines.arr[i]->getX()) <= zoommin && abs(centery - Lines.arr[i]->getY()) <= zoommin && multiplier < 1.0)
+		if (abs(Lines.arr[i]->getX(0) - Lines.arr[i]->getX(1)) <= zoommin && abs(Lines.arr[i]->getY(0) - Lines.arr[i]->getY(1)) <= zoommin && multiplier < 1.0)
 		{
 			zoomflag = false;
 		}

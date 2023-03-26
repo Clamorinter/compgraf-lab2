@@ -1,6 +1,5 @@
-//#include <Windows.h>
+#include <Windows.h>
 #include "WinRender.h"
-#include <iostream>
 
 #define X_SCREEN 1200
 #define Y_SCREEN 800
@@ -8,11 +7,10 @@
 
 int main(void)
 {
+	HWND hwnd = GetConsoleWindow();
+	ShowWindow(hwnd, SW_HIDE);
 
 	WinRender graphscreen(X_SCREEN, Y_SCREEN);
-
-	//HWND hwnd = GetConsoleWindow();
-	//ShowWindow(hwnd, SW_SHOW);
 
 	while (!graphscreen.isExit())
 	{
@@ -24,4 +22,7 @@ int main(void)
 
 		graphscreen.doAChange();
 	}
+
+	ShowWindow(hwnd, SW_SHOW);
+	return 0;
 }

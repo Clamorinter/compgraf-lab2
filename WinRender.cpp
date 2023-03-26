@@ -1,7 +1,5 @@
 #include "WinRender.h"
 
-#include <iostream>
-
 WinRender::WinRender(int x, int y)
 {
 	initwindow(x, y, "Figures");
@@ -311,7 +309,17 @@ void WinRender::choosing()
 		{
 			if (choosed != counter1)
 			{
-				figures.arr[counter1]->setColor(0);
+				if (counter1 != -1)
+				{
+					figures.arr[counter1]->setColor(0);
+				}
+				else
+				{
+					for (int i = 0; i < numOfElements; i++)
+					{
+						figures.arr[i]->setColor(0);
+					}
+				}
 			}
 		}
 		chooseflag = true;
@@ -531,11 +539,31 @@ void WinRender::zoomkey()
 		}
 		else
 		{
-			centerx = mousex();
-			centery = mousey();
+			bool zoomminflag = true;
+			int zoommin = 100;
+			int xcheck, ycheck;
 			for (int i = 0; i < numOfElements; i++)
 			{
-				figures.arr[i]->zoom((float)(1.0 / 1.10), centerx, centery);
+				for (int j = 0; j < figures.arr[i]->getNumOfAngles() - 1; j++)
+				{
+					xcheck = figures.arr[i]->getX(j);
+					ycheck = figures.arr[i]->getY(j);
+					xcheck = abs(xcheck - figures.arr[i]->getX(1+j));
+					ycheck = abs(ycheck - figures.arr[i]->getY(1+ j));
+					if (xcheck < zoommin && ycheck < zoommin)
+					{
+						zoomminflag = false;
+					}
+				}
+			}
+			if (zoomminflag)
+			{
+				centerx = mousex();
+				centery = mousey();
+				for (int i = 0; i < numOfElements; i++)
+				{
+					figures.arr[i]->zoom((float)(1.0 / 1.10), centerx, centery);
+				}
 			}
 		}
 		break;
